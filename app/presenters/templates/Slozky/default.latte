@@ -1,0 +1,33 @@
+{block content}
+<h1>Vaše složky</h1>
+<a n:href="Slozky:create">Vytvořit novou složku</a>
+
+<div class="table-responsive">
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Složka</th>
+        <th>Aktuální velikost</th>
+        <th>Maximální velikost</th>
+        <th>Poznámka</th>
+        <th>Exporty</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr n:foreach="$folders as $f">
+        <td>{$f->name}</td>
+        <td>{$getFolder($f->name)->space_used|bytes}</td>
+        <td>{$getFolder($f->name)->space_available|bytes}</td>
+        <td>{$f->comment}</td>
+        <td>
+          {var $actshares = $f->related('share', 'folder_id')->fetchPairs('id', 'shareType_id')}
+          {foreach $shareTypes as $st}
+            {var $shared = in_array($st->id, $actshares)}
+            {var $pname = ucfirst($st->name)}
+            <a n:href="{$pname}:edit $f->id" class="btn {if $shared}btn-success{else}btn-default{/if}">{$st->humanName}</a>
+          {/foreach}
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

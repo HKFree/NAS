@@ -1,0 +1,3 @@
+apt-get install apache2 php5
+apt-get install php5-ldap php5-mysqlnd ldap-tools
+a2enmod rewrite

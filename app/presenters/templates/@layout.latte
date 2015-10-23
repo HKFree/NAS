@@ -1,0 +1,116 @@
+{**
+ * @param string   $basePath web base path
+ * @param array    $flashes  flash messages
+ *}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="bkralik - bkralik.cz">
+    <!-- <link rel="icon" href="{$basePath}/favicon.ico"> -->
+
+    <title>{ifset title}{include title|striptags} | {/ifset}NAS HKFree.org</title>
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    
+    <style>
+    
+    </style>
+    
+    {block head}{/block}
+  </head>
+
+  <body> 
+
+    <nav class="navbar navbar-default">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" n:href="Homepage:default">NAS HKFree.org</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li n:if="$user->loggedIn == true" data-toggle="tooltip" data-placement="bottom" title="Vaše role jsou {implode(', ', $user->getRoles())}">
+              <p class="navbar-text">Přihlášen {$user->getIdentity()->username} ({$user->getIdentity()->id})</p>
+            </li>
+            
+            <li{ifCurrent Homepage:default} class="active"{/ifCurrent}><a n:href="Homepage:default">Domů</a></li>
+            {if $user->loggedIn}
+              <li{ifCurrent Slozky:default} class="active"{/ifCurrent}><a n:href="Slozky:default">Složky</a></li>
+            {/if}
+            <li{ifCurrent Sign:in} class="active"{/ifCurrent}>
+              <a n:if="$user->loggedIn == true" n:href="Sign:out">Odhlásit se</a>
+              <a n:if="$user->loggedIn == false" n:href="Sign:in">Přihlásit se</a>
+            </li>
+            <!--
+            <li><a href="#contact">Contact</a></li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li><a href="#">Action</a></li>
+                <li><a href="#">Another action</a></li>
+                <li><a href="#">Something else here</a></li>
+                <li role="separator" class="divider"></li>
+                <li class="dropdown-header">Nav header</li>
+                <li><a href="#">Separated link</a></li>
+                <li><a href="#">One more separated link</a></li>
+              </ul>
+            </li>
+            -->
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
+
+    <div class="container">
+      <!-- Example row of columns -->
+      <div class="row">
+        <div class="col-md-12">
+          
+          <div n:foreach="$flashes as $flash" n:class="alert, 'alert-'.$flash->type" style="margin-top: 20px;">{$flash->message}</div>
+          
+          {include content}
+          
+        </div>
+      </div>
+
+      <hr>
+      <!--
+      <footer>
+        <p>&copy; ITFuture 2015</p>
+      </footer> -->
+    </div> <!-- /container -->
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <script src="//nette.github.io/resources/js/netteForms.min.js"></script>
+    <script src="{$basePath}/js/main.js"></script>
+
+    <script>
+      $(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+      });
+    </script>
+  </body>
+</html>
+
