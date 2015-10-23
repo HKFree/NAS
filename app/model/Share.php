@@ -28,6 +28,8 @@ class Share extends Table {
             fwrite($handle, $line."\n");
         }
         
+        exec('sudo ../app/scripts/exportnfs.sh '.$tmpfname);
+        
         fclose($handle);
     }
 }
