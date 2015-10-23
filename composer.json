@@ -20,6 +20,7 @@
 		"nette/utils": "~2.3.0",
 		"latte/latte": "~2.3.0",
 		"tracy/tracy": "~2.3.0",
+		"nette/nette": "~2.3.0",
 		"instante/bootstrap-3-renderer": "@dev"
 	},
 	"require-dev": {
