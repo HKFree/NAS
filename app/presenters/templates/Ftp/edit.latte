@@ -1,0 +1,13 @@
+{block content}
+
+<h2>Nastavení FTP exportu <small>složky {$slozka}</small></h2>
+<a n:href="Slozky:"><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"></span> Zpět</a>
+{control ftpEditForm}
+
+<p>
+  Po přihlášení na adrese <b>{$ftpurl}</b> se zadaným jménem a heslem se dostanete do složky <b>{$slozka}</b>. 
+  <br><br>
+  <b>Pozor</b>, FTP není zabezpečený protokol, volte takové heslo, které nepoužíváte nikde jinde, může dojít k jeho vyzrazení!
+</p>
+  
+{/block}

@@ -14,7 +14,7 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter
     protected function startup() {
         parent::startup();
         
-        $nonLoginPresenters = array('Sign', 'Homepage');
+        $nonLoginPresenters = array('Sign', 'Homepage', 'Api');
         $presenterName = $this->getPresenter()->name;
         
         if(!in_array($presenterName, $nonLoginPresenters) && ($this->user->isLoggedIn() != true)) {

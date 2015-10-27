@@ -30,4 +30,8 @@ class ByteHelper extends Nette\Object {
         for($i = 0; ($size / 1024) > 0.9; $i++, $size /= 1024) {}
         return(round($size, $precision) . self::$prefixes[$i] . 'B');
     }
+    
+    public static function getDegree($folder) {
+        return(substr_count($folder, '/'));
+    }
 }

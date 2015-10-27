@@ -19,13 +19,18 @@
         <td>{$getFolder($f->name)->space_used|bytes}</td>
         <td>{$getFolder($f->name)->space_available|bytes}</td>
         <td>{$f->comment}</td>
+        
         <td>
-          {var $actshares = $f->related('share', 'folder_id')->fetchPairs('id', 'shareType_id')}
-          {foreach $shareTypes as $st}
-            {var $shared = in_array($st->id, $actshares)}
-            {var $pname = ucfirst($st->name)}
-            <a n:href="{$pname}:edit $f->id" class="btn {if $shared}btn-success{else}btn-default{/if}">{$st->humanName}</a>
-          {/foreach}
+          {if App\Model\ByteHelper::getDegree($f->name) > 1}
+            {var $actshares = $f->related('share', 'folder_id')->fetchPairs('id', 'shareType_id')}
+            {foreach $shareTypes as $st}
+              {var $shared = in_array($st->id, $actshares)}
+              {var $pname = ucfirst($st->name)}
+              <a n:href="{$pname}:edit $f->id" class="btn {if $shared}btn-success{else}btn-default{/if}">{$st->humanName}</a>
+            {/foreach}
+          {else}
+            
+          {/if}
         </td>
       </tr>
     </tbody>
