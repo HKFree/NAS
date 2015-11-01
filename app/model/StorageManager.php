@@ -91,7 +91,6 @@ class StorageManager extends Nette\Object {
         
         $id = $this->folder->insert(array(
             'name' => $name,
-            'quota' => $quota,
             'user_id' => $this->user->id,
             'dateCreated' => time(),
             'comment' => $comment
