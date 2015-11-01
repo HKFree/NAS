@@ -73,8 +73,14 @@ class FtpPresenter extends BasePresenter
         return $form;
     }
 
-    public function FtpEditFormValidate(Form $form, $values) {        
-        //TODO validace IPček
+    public function FtpEditFormValidate(Form $form, $values) {
+        $eqUsername = $this->share->findAll()
+            ->where('shareType_id = ?', self::shareType_id)
+            ->where('folder_id != ?', $values->folder_id)
+            ->where('var = ?', $values->username);
+        if($eqUsername) {
+            $form->addError('Toto přihlašovací jméno už existuje, zvolte prosím jiné.');
+        }       
     }
     
     public function FtpEditFormSucceeded(Form $form, $values) {  
