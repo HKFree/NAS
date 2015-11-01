@@ -89,6 +89,8 @@ class StorageManager extends Nette\Object {
             return(false);
         }
         
+        $this->sc->fixPermissions($name);
+        
         $id = $this->folder->insert(array(
             'name' => $name,
             'user_id' => $this->user->id,
