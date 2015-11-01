@@ -76,8 +76,8 @@ class FtpPresenter extends BasePresenter
     public function FtpEditFormValidate(Form $form, $values) {
         $eqUsername = $this->share->findAll()
             ->where('shareType_id = ?', self::shareType_id)
-            ->where('folder_id != ?', $values->folder_id)
-            ->where('var = ?', $values->username);
+            ->where('NOT folder_id = ?', $values->folder_id)
+            ->where('var = ?', $values->username)->fetchAll();
         if($eqUsername) {
             $form->addError('Toto přihlašovací jméno už existuje, zvolte prosím jiné.');
         }       
