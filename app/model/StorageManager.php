@@ -60,6 +60,19 @@ class StorageManager extends Nette\Object {
         return($this->createFolder('/'.$uid.'/'.$name, $quota, $comment));
     }
     
+    public function deleteUserFolder($id) {
+        $dbFolder = $this->folder->find($id);
+        
+        
+        $state = $this->sc->deleteFolder($dbFolder->name);        
+        if(!$state) {
+            return(FALSE);
+        }
+        
+        $dbFolder->delete();
+        return(TRUE);
+    }
+    
     public function getFolders() {
         
     }

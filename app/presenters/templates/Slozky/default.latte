@@ -11,13 +11,14 @@
         <th>Maximální velikost</th>
         <th>Poznámka</th>
         <th>Exporty</th>
+        <th>Akce</th>
       </tr>
     </thead>
     <tbody>
       <tr n:foreach="$folders as $f">
         <td>{$f->name}</td>
         <td>{$getFolder($f->name)->space_used|bytes}</td>
-        <td>{$getFolder($f->name)->space_available|bytes}</td>
+        <td>{($getFolder($f->name)->space_available + $getFolder($f->name)->space_used)|bytes}</td>
         <td>{$f->comment}</td>
         
         <td>
@@ -28,8 +29,12 @@
               {var $pname = ucfirst($st->name)}
               <a n:href="{$pname}:edit $f->id" class="btn {if $shared}btn-success{else}btn-default{/if}">{$st->humanName}</a>
             {/foreach}
-          {else}
-            
+          {/if}
+        </td>
+        
+        <td>
+          {if App\Model\ByteHelper::getDegree($f->name) > 1}
+            <a n:href="Slozky:delete $f->id" class="btn btn-danger">Smazat</a>
           {/if}
         </td>
       </tr>

@@ -54,8 +54,8 @@ class NfsPresenter extends BasePresenter
         
         $form->addCheckbox('export', 'Exportovat tuto složku přes NFS?');
         
-        $form->addText('ips', 'IP adresy k exportu')
-             ->addRule(Form::FILLED, 'Alespoň jedna IP adresa musí být vyplněna');
+        $form->addText('ips', 'Adresy k exportu')
+             ->addRule(Form::FILLED, 'Alespoň jedna adresa musí být vyplněna');
 
         $form->addHidden('folder_id');
         $form->addHidden('id');
@@ -70,9 +70,15 @@ class NfsPresenter extends BasePresenter
     }
 
     public function NfsEditFormValidate(Form $form, $values) {        
-        //TODO validace IPček
-        if(preg_match('/\s/', $values->ips)) {
-            $form->addError('Pole IP adres obsahuje mezeru. Jako oddělovač používejte čárku bez mezer, prosím!');
+        if($values->export) {
+            if(preg_match('/\s/', $values->ips)) {
+                $form->addError('Pole adres obsahuje mezeru. Jako oddělovač používejte čárku bez mezer, prosím!');
+            }
+
+            $f = $this->folder->find($values->folder_id);
+            if(!$this->share->checkShare($f->name, $values->ips)) {
+                $form->addError('Pole adres není validní. Prosím přečtěte si znovu instrukce a zadání opakujte.');
+            }
         }
     }
     

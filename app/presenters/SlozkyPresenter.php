@@ -102,4 +102,42 @@ class SlozkyPresenter extends BasePresenter
         $this->flashMessage('Složka byla úspěšně uložena.', 'success');
         $this->redirect('Slozky:');
     }
+    
+    public function renderDelete($id) {
+        $f = $this->folder->find($id);
+        if(!$f) {
+            $this->error('Složka s tímto ID neexistuje.');
+        }
+        $this->template->f = $f;
+    }
+    
+    public function actionDeleteFinal($id) {
+        $f = $this->folder->find($id);
+        if(!$f) {
+            $this->error('Složka s tímto ID neexistuje.');
+        }
+        
+        $fm = $this->sm->getFolder($f->name);
+        $fc = $fm["sc"];
+        $maxSpace = 2 * 1024 * 1024;
+        if($fc->space_used > $maxSpace) {
+            $this->flashMessage('Chyba, složka není prázdná. Obsahuje ' . \Latte\Runtime\Filters::bytes($fc->space_used) . ' dat.', 'danger');
+            $this->redirect('Slozky:delete', $id);
+        }
+        
+        $sharescount = $f->related('share.folder_id')->count();
+        if($sharescount != 0) {
+            $this->flashMessage('Chyba, složka má stále zaplá některá sdílení. Deaktivujte je před smazáním, prosím.', 'danger');
+            $this->redirect('Slozky:delete', $id);
+        }
+        
+        $state = $this->sm->deleteUserFolder($id);
+        if($state == FALSE) {
+            $this->flashMessage('Omlouváme se, složku se nepodařilo smazat kvůli chybě v systému. Prosím kontaktujte podporu.', 'danger');
+            $this->redirect('Slozky:');
+        }
+        
+        $this->flashMessage('Složka byla úspěšně smazána.', 'success');
+        $this->redirect('Slozky:');
+    }
 }

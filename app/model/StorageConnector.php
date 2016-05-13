@@ -59,6 +59,14 @@ class StorageConnector extends Nette\Object {
         return($ret->ok && TRUE);
     }
     
+    public function deleteFolder($name) {
+        $params['name'] = $name;
+        
+        $data = $this->httpGet('delete', $params);
+        $ret = json_decode($data);
+        return($ret->ok && TRUE);
+    }
+    
     private function httpGet($action, $parameters = array()) {
         \Tracy\Debugger::barDump('SC - '.$action.' '.implode(', ', $parameters));
         

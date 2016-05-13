@@ -1,0 +1,14 @@
+{block content}
+
+<h2>Smazání složky</h2>
+<a n:href="Slozky:"><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"></span> Zpět</a>
+
+<br><br>
+<a n:href="Slozky:deleteFinal $f->id" class="btn btn-danger">Smazat složku {$f->name}</a>
+<br><br>
+
+<p>
+  Pro smazání musí být složka <b>prázdná</b>. Všechna sdílení musí být <b>předem vypnuta</b>. Ke složce nesmí být <b>nikdo</b> připojen!
+</p>
+
+{/block}
