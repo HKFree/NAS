@@ -46,7 +46,7 @@ class NfsPresenter extends BasePresenter
         $this['nfsEditForm']->setDefaults($defaults);
         //$this->template->osoba = $u;
         $this->template->slozka = $f->name;
-        $this->template->nfsurl = "nas.hkfree.org:/mnt/nas".$f->name."/";
+        $this->template->nfsurl = "nas.hkfree.org:" . Model\Share::dataBaseUrl . $f->name . "/";
     }
 
     protected function createComponentNfsEditForm() {
@@ -71,6 +71,9 @@ class NfsPresenter extends BasePresenter
 
     public function NfsEditFormValidate(Form $form, $values) {        
         //TODO validace IPček
+        if(preg_match('/\s/', $values->ips)) {
+            $form->addError('Pole IP adres obsahuje mezeru. Jako oddělovač používejte čárku bez mezer, prosím!');
+        }
     }
     
     public function NfsEditFormSucceeded(Form $form, $values) {  
@@ -81,9 +84,11 @@ class NfsPresenter extends BasePresenter
                 'var' => $values->ips
             ));
             $this->flashMessage('NFS share byl úspěšně vytvořen.', 'success');
+            
         } elseif(!empty($values->id) && !$values->export) {
             $this->share->find($values->id)->delete();
             $this->flashMessage('NFS share byl úspěšně smazán.', 'success');
+            
         } elseif(!empty($values->id) && $values->export) {
             $this->share->find($values->id)->update(array(
                 'var' => $values->ips

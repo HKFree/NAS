@@ -42,9 +42,9 @@ class ApiPresenter extends BasePresenter
             $out[] = 'auth_ok:0';
         } else {
             $out[] = 'auth_ok:1';
-            $out[] = 'uid:65000';
-            $out[] = 'gid:65000';
-            $out[] = 'dir:/mnt/nas'.$s->folder->name.'/';
+            $out[] = 'uid:' . Model\Share::shareuid;
+            $out[] = 'gid:' . Model\Share::sharegid;
+            $out[] = 'dir:'. Model\Share::dataBaseUrl . $s->folder->name.'/';
         }
         
         $out[] = 'end';
