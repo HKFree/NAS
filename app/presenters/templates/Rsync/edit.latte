@@ -1,0 +1,35 @@
+{block content}
+
+<h2>Nastavení Rsync exportu <small>složky {$slozka}</small></h2>
+<a n:href="Slozky:"><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"></span> Zpět</a>
+{control rsyncEditForm}
+
+<p>
+  Jméno modulu je <b>{$moduleName}</b>, tudíž tato složka bude přístupná na adrese <b id="rsyncUrl">{$rsyncurl}</b>
+</p>
+<p>
+  Pozor - přenos souborů pomocí programu Rsync není nijak šifrovaný! Chraňte svá data dodatečnou silnou šifrou, například pomocí programu <a href="http://duplicity.nongnu.org/">Duplicity</a> nebo pomocí EncFS.
+
+
+{/block}
+
+{block endScript}
+
+<script>
+  function e() {
+    var origText = {$rsyncurl};
+    var toReplace = $('#frm-rsyncEditForm-username').val();
+    if(toReplace.length > 0) {
+      var newText = origText.replace("<user>", toReplace);
+      $('#rsyncUrl').text(newText);
+    } else {
+      $('#rsyncUrl').text(origText);
+    }
+  }
+  
+  $(function () {
+    e();
+    $('#frm-rsyncEditForm-username').change(e).keyup(e);
+  });
+</script>
+{/block}

@@ -19,10 +19,12 @@ class Share extends Table {
     const dataBaseUrl = '/mnt/nas';
     const nfsParams = 'rw,all_squash,insecure,removable,anonuid=65000,anongid=65000';
     
+    const rsyncHeader = "uid = share\ngid = share\nuse chroot = true\nlog file = /var/log/rsyncd.log\nlist = false\nread only = false\nmunge symlinks = true";
+    
     private function getExportString($folder, $ips) {
         $ips_lines = explode(',', $ips);
         
-        $out = $out = self::dataBaseUrl . $folder;
+        $out = self::dataBaseUrl . $folder;
         if(count($ips_lines) > 0) {
             foreach($ips_lines as $ip) {
                 $out .= " " . $ip . "(" . self::nfsParams . ")";
@@ -58,7 +60,7 @@ class Share extends Table {
         return(TRUE);
     }
     
-    public function checkShare($folder, $ips) {
+    public function checkNFSShare($folder, $ips) {
         $tmpfname = tempnam("/tmp", "nfstest");
         $handle = fopen($tmpfname, "w");
         
@@ -84,6 +86,44 @@ class Share extends Table {
         }
                 
         unlink($tmpfname);
+        return(TRUE);
+    }
+    
+    public function exportRsync() {
+        $shares = $this->findBy(array(
+            'shareType_id' => 5
+        ));
+
+        $tmp_config = tempnam("/tmp", "rsyncconfig");
+        $tmp_secret = tempnam("/tmp", "rsyncsecret");
+        $handle_config = fopen($tmp_config, "w");
+        $handle_secret = fopen($tmp_secret, "w");
+        
+        fwrite($handle_config, self::rsyncHeader . "\n");
+        
+        foreach ($shares as $share) {
+            $folderParsed = explode("/", $share->folder->name);
+            $folderName = $folderParsed[2];
+            //$line = $this->getExportString($share->folder->name, $share->var);
+            fwrite($handle_config, "\n[" . $share->folder->user_id . "-" . $folderName . "]\n");
+            fwrite($handle_config, "path = " . self::dataBaseUrl . $share->folder->name . "\n");
+            fwrite($handle_config, "auth users = " . $share->var . "\n");
+            fwrite($handle_config, "secrets file = /etc/rsyncd.secrets\n");
+            
+            fwrite($handle_secret, $share->var . ":" . $share->var2 . "\n");
+        }
+        
+        fclose($handle_config);
+        fclose($handle_secret);
+        
+        
+        $o = exec('sudo ../app/scripts/exportrsync.sh ' . $tmp_config. ' ' . $tmp_secret);
+        if(!preg_match('/ok/', $o)) {
+            return(FALSE);
+        }
+        
+        unlink($tmp_config);
+        unlink($tmp_secret);
         return(TRUE);
     }
 }

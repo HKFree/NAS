@@ -77,7 +77,7 @@ class NfsPresenter extends BasePresenter
             }
 
             $f = $this->folder->find($values->folder_id);
-            if(!$this->share->checkShare($f->name, $values->ips)) {
+            if(!$this->share->checkNFSShare($f->name, $values->ips)) {
                 $form->addError('Pole adres není validní. Prosím přečtěte si znovu instrukce a zadání opakujte.');
             }
         }
