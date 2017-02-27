@@ -55,6 +55,7 @@ class NfsPresenter extends BasePresenter
         $form->addCheckbox('export', 'Exportovat tuto složku přes NFS?');
         
         $form->addText('ips', 'Adresy k exportu')
+             ->addConditionOn($form['export'], Form::EQUAL, TRUE)
              ->addRule(Form::FILLED, 'Alespoň jedna adresa musí být vyplněna');
 
         $form->addHidden('folder_id');
