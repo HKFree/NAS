@@ -34,7 +34,8 @@ class ApiPresenter extends BasePresenter
         
         $s = $this->share->findOneBy(array(
             'var' => $username,
-            'var2' => $password
+            'var2' => $password,
+            'shareType_id' => \App\Presenters\FtpPresenter::shareType_id
         ));
         
         $out = array();
@@ -48,10 +49,62 @@ class ApiPresenter extends BasePresenter
         }
         
         $out[] = 'end';
-        $this->send($out);
+        $this->sendText($out);
     }
     
-    private function send($data) {
+    public function renderAuthWebdav() {
+        if($this->httpRequest->getMethod() != "POST") {
+            $this->error('Neplatná metoda.', 403);
+        }
+        
+        $username = $this->httpRequest->getPost('username', '');
+        $password = $this->httpRequest->getPost('password', '');
+        
+        $s = $this->share->findOneBy(array(
+            'var' => $username,
+            'var2' => $password,
+            'shareType_id' => \App\Presenters\WebdavPresenter::shareType_id
+        ));
+        
+        $out = array("status" => 0);
+        
+        if($s) {
+            $out["status"] = 1;
+            $out["username"] = $username;
+            $out["folder"] = Model\Share::dataBaseUrl . $s->folder->name;
+        }
+        
+        $this->sendResponse(new JsonResponse($out));
+    }
+    
+    public function renderFolderWebdav() {
+        if($this->httpRequest->getMethod() != "POST") {
+            $this->error('Neplatná metoda.', 403);
+        }
+        
+        $username = $this->httpRequest->getPost('username', '');
+        
+        $s = $this->share->findOneBy(array(
+            'var' => $username,
+            'shareType_id' => \App\Presenters\WebdavPresenter::shareType_id
+        ));
+        
+        $out = array("status" => 0);
+        
+        if($s) {
+            $out["status"] = 1;
+            $out["folder"] = Model\Share::dataBaseUrl . $s->folder->name;
+        }
+        
+        $this->sendResponse(new JsonResponse($out));
+    }
+    
+    /**
+     * Serialize array and send it out
+     * 
+     * @param string[] $data
+     */
+    private function sendText($data) {
         $text = implode("\n", $data);
         $this->sendResponse(new TextResponse($text . "\n"));
     }
