@@ -1,0 +1,83 @@
+{block content}
+<h1>Statistiky!</h1>
+<p>
+  Průměrný uživatel zabírá <b>{$userStats['average']|bytes}</b> místa, přičemž NAS alespoň jednou použilo <b>{$userStats['count']}</b> členů a <b>{$userStats['1gcount']}</b> lidí tady má uložen alespoň jeden gigabajt dat. Rekordman zabírá <b>{$userStats['maximum']|bytes}</b>.
+</p>
+<div class="row">
+  <div class="col-md-4">
+    <h3>Počty exportů</h3>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Export</th>
+          <th>Počet</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr n:foreach="$shareGroups as $sg">
+          <td>{$sg->shareType->humanName}</td>
+          <td>{$sg->c}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="col-md-4">    
+    <h3>Histogram zabraného místa</h3>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Zabrané místo</th>
+          <th>Počet lidí</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr n:foreach="$userStats['histogram'] as $i => $h">
+          <td>{pow(1024, $i)|bytes:0} až {pow(1024, ($i+1))|bytes:0}</td>
+          <td>{$h}</td>
+        </tr>
+      </tbody>
+    </table></div>
+  <div class="col-md-4"></div>
+</div>
+
+
+{*
+<div class="table-responsive">
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Složka</th>
+        <th>Aktuální velikost</th>
+        <th>Maximální velikost</th>
+        <th>Poznámka</th>
+        <th>Exporty</th>
+        <th>Akce</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr n:foreach="$folders as $f">
+        <td>{$f->name}</td>
+        {*<td>{$getFolder($f->name)->space_used|bytes}</td>
+        <td>{($getFolder($f->name)->space_available + $getFolder($f->name)->space_used)|bytes}</td>
+        <td>{$f->comment}</td>
+        
+        <td>
+          {if App\Model\ByteHelper::getDegree($f->name) > 1}
+            {var $actshares = $f->related('share', 'folder_id')->fetchPairs('id', 'shareType_id')}
+            {foreach $shareTypes as $st}
+              {var $shared = in_array($st->id, $actshares)}
+              {var $pname = ucfirst($st->name)}
+              <a n:href="{$pname}:edit $f->id" class="btn {if $shared}btn-success{else}btn-default{/if}">{$st->humanName}</a>
+            {/foreach}
+          {/if}
+        </td>
+        
+        <td>
+          {if App\Model\ByteHelper::getDegree($f->name) > 1}
+            <a n:href="Slozky:delete $f->id" class="btn btn-danger">Smazat</a>
+          {/if}
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>*}

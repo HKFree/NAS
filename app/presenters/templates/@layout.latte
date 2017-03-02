@@ -12,7 +12,7 @@
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <meta name="description" content="">
     <meta name="author" content="bkralik - bkralik.cz">
-    <!-- <link rel="icon" href="{$basePath}/favicon.ico"> -->
+    <link rel="icon" href="{$basePath}/favicon.ico">
 
     <title>{ifset title}{include title|striptags} | {/ifset}NAS HKFree.org</title>
 
@@ -58,6 +58,7 @@
             <li{ifCurrent Homepage:default} class="active"{/ifCurrent}><a n:href="Homepage:default">Domů</a></li>
             {if $user->loggedIn}
               <li{ifCurrent Slozky:default} class="active"{/ifCurrent}><a n:href="Slozky:default">Složky</a></li>
+              <li{ifCurrent Stats:default} class="active"{/ifCurrent}><a n:href="Stats:default">Statistika</a></li>
             {/if}
             <li{ifCurrent Sign:in} class="active"{/ifCurrent}>
               <a n:if="$user->loggedIn == true" n:href="Sign:out">Odhlásit se</a>
@@ -98,7 +99,7 @@
       <hr>
       
       <footer>
-        <p>&copy; HKFree.org 2016. Zdrojový kód dostupný na <a href="https://github.com/HKFree/NAS">github.com/HKFree/NAS</a>. Spravuje <a href="http://wiki.hkfree.org/U%C5%BEivatel:Bkralik">bkralik</a>.</p>
+        <p>&copy; HKFree.org 2017. Zdrojový kód dostupný na <a href="https://github.com/HKFree/NAS">github.com/HKFree/NAS</a>. Spravuje <a href="http://wiki.hkfree.org/U%C5%BEivatel:Bkralik">bkralik</a>.</p>
       </footer>
     </div> <!-- /container -->
 

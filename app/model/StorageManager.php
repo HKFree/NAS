@@ -96,6 +96,67 @@ class StorageManager extends Nette\Object {
         }
     }
     
+    public function getUserStats() {
+        $avg = 0;
+        $max = 0;
+        $count = 0;
+        $count1g = 0;
+        
+        foreach($this->sc->getFolders() as $f) {
+            if(ByteHelper::getDegree($f->name) != 1) {
+                continue;
+            }
+            
+            if($f->name == "/") {
+                continue;
+            }
+            
+            $avg += $f->space_used;
+            $count++;
+            
+            if($max < $f->space_used) {
+                $max = $f->space_used;
+            }
+            
+            if($f->space_used >= 1e9) {
+                $count1g++;
+            }
+        }
+        $avg /= $count;
+        
+        $minHistVal = 1;
+        $maxHistVal = ceil(log($max, 1024));
+        
+        $hist = array();
+        for($i = $minHistVal; $i < $maxHistVal; $i++) {
+            $hist[$i] = 0;            
+        }
+        
+        foreach($this->sc->getFolders() as $f) {
+            if(ByteHelper::getDegree($f->name) != 1) {
+                continue;
+            }
+            
+            if($f->name == "/") {
+                continue;
+            }
+            
+            $i = floor(log($f->space_used, 1024)); 
+            if(($i >= $minHistVal) && ($i < $maxHistVal)) {
+                $hist[$i]++;
+            }
+        }
+        
+        return(array(
+            "count" => $count,
+            "average" => $avg,
+            "maximum" => $max,
+            "histogram" => $hist,
+            //"histogramStep" => $max / $histCount,
+            "1gcount" => $count1g
+        ));
+    }
+    
     private function createFolder($name, $quota = NULL, $comment = '') {
         $state = $this->sc->createFolder($name, $quota);        
         if(!$state) {
