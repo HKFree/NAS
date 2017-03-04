@@ -60,6 +60,7 @@
               <li{ifCurrent Slozky:default} class="active"{/ifCurrent}><a n:href="Slozky:default">Složky</a></li>
               <li{ifCurrent Stats:default} class="active"{/ifCurrent}><a n:href="Stats:default">Statistika</a></li>
             {/if}
+            <li{ifCurrent Navody:default} class="active"{/ifCurrent}><a n:href="Navody:default">Návody</a></li>
             <li{ifCurrent Sign:in} class="active"{/ifCurrent}>
               <a n:if="$user->loggedIn == true" n:href="Sign:out">Odhlásit se</a>
               <a n:if="$user->loggedIn == false" n:href="Sign:in">Přihlásit se</a>

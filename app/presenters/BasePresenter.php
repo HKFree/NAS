@@ -20,7 +20,7 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter
         parent::startup();
         
         $presenterName = $this->getPresenter()->name;
-        $nonLoginPresenters = array('Sign', 'Homepage', 'Api');
+        $nonLoginPresenters = array('Sign', 'Homepage', 'Api', 'Navody');
         $maintenancePresenters = array('Api');
         
         $devIPs = array('10.107.91.237', '88.101.182.229', '10.107.253.2');
