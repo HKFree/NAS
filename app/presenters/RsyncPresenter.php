@@ -9,7 +9,7 @@ use Nette,
     Instante\Bootstrap3Renderer\BootstrapRenderer;
 
 
-class RsyncPresenter extends BasePresenter
+class RsyncPresenter extends SharePresenter
 {  
     /** @var Model\Folder @inject */
     public $folder;
@@ -20,16 +20,8 @@ class RsyncPresenter extends BasePresenter
     const shareType_id = 5;
    
     public function renderEdit($id) {
-        $f = $this->folder->find($id);
-        
-        if(!$f) {
-            $this->error("Složka s daným ID neexistuje.");
-        }
-        
-        if(ByteHelper::getDegree($f->name) == 1) {
-            $this->error("Základní složku uživatele nelze sdílet.");
-        }
-        
+        $f = parent::renderEdit($id);
+                
         $defaults["folder_id"] = $id;
         
         $s = $this->share->findOneBy(array(
@@ -45,7 +37,6 @@ class RsyncPresenter extends BasePresenter
         }
         
         $this['rsyncEditForm']->setDefaults($defaults);
-        //$this->template->osoba = $u;
         $this->template->slozka = $f->name;
         $folderParsed = explode("/", $f->name);
         $moduleName = $f->user_id . "-" . $folderParsed[2];

@@ -30,6 +30,11 @@ class StorageManager extends Nette\Object {
         $this->user = $user;        
     }
     
+    public function checkPermissions($folder_id) {
+        $f = $this->folder->find($folder_id);
+        return($f->user_id == $this->user->id);
+    }
+    
     public function getDefaultQuota(Nette\Security\User $user) {
         $quota = '100G';
         if($user->isInRole('SO') || $user->isInRole('ZSO') || $user->isInRole('VV')) {

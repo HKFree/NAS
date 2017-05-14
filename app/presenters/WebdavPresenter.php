@@ -9,7 +9,7 @@ use Nette,
     Instante\Bootstrap3Renderer\BootstrapRenderer;
 
 
-class WebdavPresenter extends BasePresenter
+class WebdavPresenter extends SharePresenter
 {  
     /** @var Model\Folder @inject */
     public $folder;
@@ -20,15 +20,7 @@ class WebdavPresenter extends BasePresenter
     const shareType_id = 2;
    
     public function renderEdit($id) {
-        $f = $this->folder->find($id);
-        
-        if(!$f) {
-            $this->error("Složka s daným ID neexistuje.");
-        }
-        
-        if(ByteHelper::getDegree($f->name) == 1) {
-            $this->error("Základní složku uživatele nelze sdílet.");
-        }
+        $f = parent::renderEdit($id);
         
         $defaults["folder_id"] = $id;
         
@@ -46,8 +38,6 @@ class WebdavPresenter extends BasePresenter
         
         $this['webdavEditForm']->setDefaults($defaults);
         $this->template->slozka = $f->name;
-        //$this->template->osoba = $u;
-        //$this->template->ftpurl = "ftp://nas.hkfree.org/";
     }
 
     protected function createComponentWebdavEditForm() {
