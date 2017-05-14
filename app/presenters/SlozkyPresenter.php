@@ -108,6 +108,11 @@ class SlozkyPresenter extends BasePresenter
         if(!$f) {
             $this->error('Složka s tímto ID neexistuje.');
         }
+        
+        if(!$this->sm->checkPermissions($id)) {
+            $this->error('Na smazání této složky nemáte právo.');
+        }
+        
         $this->template->f = $f;
     }
     
@@ -115,6 +120,10 @@ class SlozkyPresenter extends BasePresenter
         $f = $this->folder->find($id);
         if(!$f) {
             $this->error('Složka s tímto ID neexistuje.');
+        }
+        
+        if(!$this->sm->checkPermissions($id)) {
+            $this->error('Na smazání této složky nemáte právo.');
         }
         
         $fm = $this->sm->getFolder($f->name);
