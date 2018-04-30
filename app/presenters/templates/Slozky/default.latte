@@ -34,6 +34,7 @@
         
         <td>
           {if App\Model\ByteHelper::getDegree($f->name) > 1}
+            <a n:href="Slozky:edit $f->id" class="btn btn-default">Upravit</a>
             <a n:href="Slozky:delete $f->id" class="btn btn-danger">Smazat</a>
           {/if}
         </td>

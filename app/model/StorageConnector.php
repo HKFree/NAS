@@ -67,6 +67,19 @@ class StorageConnector extends Nette\Object {
         return($ret->ok && TRUE);
     }
     
+    public function setQuota($name, $quota = NULL) {
+        $params['name'] = $name;
+        if(empty($quota)) {
+            $params['quota'] = 'none';
+        } else {
+            $params['quota'] = intval($quota);
+        }
+        
+        $data = $this->httpGet('quota', $params);
+        $ret = json_decode($data);
+        return($ret->ok && TRUE);
+    }
+    
     private function httpGet($action, $parameters = array()) {
         \Tracy\Debugger::barDump('SC - '.$action.' '.implode(', ', $parameters));
         

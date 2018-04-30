@@ -78,6 +78,13 @@ class StorageManager extends Nette\Object {
         return(TRUE);
     }
     
+    public function changeQuota($id, $quota) {
+        $dbFolder = $this->folder->find($id);
+        
+        $state = $this->sc->setQuota($dbFolder->name, $quota);        
+        return($state);
+    }
+    
     public function getFolders() {
         
     }

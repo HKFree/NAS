@@ -26,9 +26,17 @@ class ByteHelper extends Nette\Object {
         }
     }
     
-    public static function bytesToHuman($size, $precision = 2) {
+    /**
+     * 
+     * 
+     * @param int $size
+     * @param type $precision
+     * @param type $addSpace
+     * @return type
+     */
+    public static function bytesToHuman($size, $precision = 2, $addSpace = FALSE) {
         for($i = 0; ($size / 1024) > 0.9; $i++, $size /= 1024) {}
-        return(round($size, $precision) . self::$prefixes[$i] . 'B');
+        return(round($size, $precision) . ($addSpace ? " " : "") . self::$prefixes[$i] . 'B');
     }
     
     public static function getDegree($folder) {
