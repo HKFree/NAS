@@ -103,7 +103,7 @@ class SlozkyPresenter extends BasePresenter
     }
     
     public function slozkaEditFormSucceeded(Form $form, $values) {
-        if(!$this->sm->checkPermissions($values->id)) {
+        if(!empty($value->id) && !$this->sm->checkPermissions($values->id)) {
             $this->error('Na editaci této složky nemáte právo.');
         }
         
