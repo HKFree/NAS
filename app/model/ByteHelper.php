@@ -4,13 +4,14 @@ namespace App\Model;
 
 use Nette,
     App\Model;
+use Nette\SmartObject;
 
 /**
  * Description of ByteHelper
  * 
  * @author bkralik
  */
-class ByteHelper extends Nette\Object {
+class ByteHelper {
     
     private static $prefixes = array('','k','M','G','T','P','E','Z','Y');
     

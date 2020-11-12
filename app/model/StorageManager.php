@@ -5,6 +5,7 @@ namespace App\Model;
 use Nette,
     App\Model,
     App\Model\ByteHelper;
+use Nette\SmartObject;
 
 /**
  * Description of StorageManager
@@ -13,7 +14,7 @@ use Nette,
  * 
  * @author bkralik
  */
-class StorageManager extends Nette\Object {
+class StorageManager {
     
     /** @var Model\StorageConnector */
     private $sc;
@@ -36,7 +37,7 @@ class StorageManager extends Nette\Object {
     }
     
     public function getDefaultQuota(Nette\Security\User $user) {
-        $quota = '100G';
+        $quota = '200G';  #Christmas gift 2019
         if($user->isInRole('SO') || $user->isInRole('ZSO') || $user->isInRole('VV')) {
             $quota = '3T';
         }
@@ -60,9 +61,9 @@ class StorageManager extends Nette\Object {
         }
     }
     
-    public function createUserFolder($name, $quota = NULL, $comment = '') {
+    public function createUserFolder($name, $quota = NULL, $comment = '', $dedicatedShare = 0) {
         $uid = $this->user->id;
-        return($this->createFolder('/'.$uid.'/'.$name, $quota, $comment));
+        return($this->createFolder('/'.$uid.'/'.$name, $quota, $comment, $dedicatedShare));
     }
     
     public function deleteUserFolder($id) {
@@ -169,7 +170,7 @@ class StorageManager extends Nette\Object {
         ));
     }
     
-    private function createFolder($name, $quota = NULL, $comment = '') {
+    private function createFolder($name, $quota = NULL, $comment = '', $dedicatedShare = 0) {
         $state = $this->sc->createFolder($name, $quota);        
         if(!$state) {
             return(false);
@@ -181,7 +182,8 @@ class StorageManager extends Nette\Object {
             'name' => $name,
             'user_id' => $this->user->id,
             'dateCreated' => time(),
-            'comment' => $comment
+            'comment' => $comment,
+            'dedicatedShare' => $dedicatedShare
         ));
         
         return($id);

@@ -4,12 +4,13 @@ namespace App\Model;
 
 use Nette;
 use Nette\Security\AuthenticationException;
+use Nette\SmartObject;
 
 
 /**
  * Users management.
  */
-class UserManager extends Nette\Object implements Nette\Security\IAuthenticator
+class UserManager implements Nette\Security\IAuthenticator
 {
     /** @var string */
     private $ldapServerURL;

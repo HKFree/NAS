@@ -23,7 +23,7 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter
         $nonLoginPresenters = array('Sign', 'Homepage', 'Api', 'Navody');
         $maintenancePresenters = array('Api');
         
-        $devIPs = array('10.107.91.237', '88.101.182.229', '10.107.253.2');
+        $devIPs = array('10.107.91.237', '88.101.182.229', '10.107.253.2', '10.107.250.15');
         if(!in_array($this->request->getRemoteAddress(), $devIPs) && $this->maintenance && !in_array($presenterName, $maintenancePresenters)) {
             if($presenterName != "Homepage" || $this->getAction() != "maintenance") {
                 $this->redirect("Homepage:maintenance");

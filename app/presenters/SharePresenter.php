@@ -23,6 +23,9 @@ class SharePresenter extends BasePresenter
     /** @var Model\StorageManager @inject */
     public $sm;
     
+    /** @var \Instante\ExtendedFormMacros\IFormFactory @inject */
+    public $formFactory;
+    
     public function renderEdit($id) {
         $f = $this->folder->find($id);
         

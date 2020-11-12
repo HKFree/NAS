@@ -6,7 +6,7 @@ use Nette,
     App\Model,
     App\Model\ByteHelper,
     Nette\Application\UI\Form,
-    Instante\Bootstrap3Renderer\BootstrapRenderer;
+    Instante\Bootstrap3Renderer\RenderModeEnum;
 
 
 class FtpPresenter extends SharePresenter
@@ -42,7 +42,8 @@ class FtpPresenter extends SharePresenter
     }
 
     protected function createComponentFtpEditForm() {
-        $form = new Form;
+        $form = $this->formFactory->create();
+        $form->getRenderer()->setRenderMode(RenderModeEnum::HORIZONTAL);
         
         $form->addCheckbox('export', 'Exportovat tuto složku na FTP?');
         
@@ -52,7 +53,8 @@ class FtpPresenter extends SharePresenter
 
         $form->addText('password', 'Heslo')
              ->addConditionOn($form['export'], Form::EQUAL, TRUE)
-             ->addRule(Form::MIN_LENGTH, 'Heslo musí mít alespoň 8 znaků', 8);
+             ->addRule(Form::MIN_LENGTH, 'Heslo musí mít alespoň 8 znaků', 8)
+             ->setRequired(TRUE);
         
         $form->addHidden('folder_id');
         $form->addHidden('id');
@@ -62,7 +64,6 @@ class FtpPresenter extends SharePresenter
         $form->onSuccess[] = array($this, 'FtpEditFormSucceeded');
         $form->onValidate[] = array($this, 'FtpEditFormValidate');
         
-        $form->setRenderer(new BootstrapRenderer);
         return $form;
     }
 

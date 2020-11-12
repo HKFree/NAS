@@ -25,6 +25,8 @@
           {if App\Model\ByteHelper::getDegree($f->name) > 1}
             {var $actshares = $f->related('share', 'folder_id')->fetchPairs('id', 'shareType_id')}
             {foreach $shareTypes as $st}
+              {continueIf ($f->dedicatedShare == 0) && ($st->dedicated == 1)}
+              {continueIf ($f->dedicatedShare != 0) && ($st->dedicated == 0) && ($f->dedicatedShare != $st->id)}
               {var $shared = in_array($st->id, $actshares)}
               {var $pname = ucfirst($st->name)}
               <a n:href="{$pname}:edit $f->id" class="btn {if $shared}btn-success{else}btn-default{/if}">{$st->humanName}</a>

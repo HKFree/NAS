@@ -3,13 +3,14 @@
 namespace App\Model;
 
 use Nette;
+use Nette\SmartObject;
 
 /**
  * Description of StorageConnector
  *
  * @author bkralik
  */
-class StorageConnector extends Nette\Object {
+class StorageConnector {
     /** @var string */
     private $storageServerURL;
     

@@ -6,17 +6,11 @@ use Nette,
     App\Model,
     App\Model\ByteHelper,
     Nette\Application\UI\Form,
-    Instante\Bootstrap3Renderer\BootstrapRenderer;
+    Instante\Bootstrap3Renderer\RenderModeEnum;
 
 
 class RsyncPresenter extends SharePresenter
 {  
-    /** @var Model\Folder @inject */
-    public $folder;
-    
-    /** @var Model\Share @inject */
-    public $share;
-    
     const shareType_id = 5;
    
     public function renderEdit($id) {
@@ -46,7 +40,8 @@ class RsyncPresenter extends SharePresenter
     }
 
     protected function createComponentRsyncEditForm() {
-        $form = new Form;
+        $form = $this->formFactory->create();
+        $form->getRenderer()->setRenderMode(RenderModeEnum::HORIZONTAL);
         
         $form->addCheckbox('export', 'Exportovat tuto složku přes Rsync?');
         
@@ -56,7 +51,8 @@ class RsyncPresenter extends SharePresenter
 
         $form->addText('password', 'Heslo')
              ->addConditionOn($form['export'], Form::EQUAL, TRUE)
-             ->addRule(Form::MIN_LENGTH, 'Heslo musí mít alespoň 8 znaků', 8);
+             ->addRule(Form::MIN_LENGTH, 'Heslo musí mít alespoň 8 znaků', 8)
+             ->setRequired(TRUE);
 
         $form->addHidden('folder_id');
         $form->addHidden('id');
@@ -66,7 +62,6 @@ class RsyncPresenter extends SharePresenter
         $form->onSuccess[] = array($this, 'RsyncEditFormSucceeded');
         $form->onValidate[] = array($this, 'RsyncEditFormValidate');
         
-        $form->setRenderer(new BootstrapRenderer);
         return $form;
     }
 

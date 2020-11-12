@@ -6,17 +6,11 @@ use Nette,
     App\Model,
     App\Model\ByteHelper,
     Nette\Application\UI\Form,
-    Instante\Bootstrap3Renderer\BootstrapRenderer;
+    Instante\Bootstrap3Renderer\RenderModeEnum;
 
 
 class NfsPresenter extends SharePresenter
-{  
-    /** @var Model\Folder @inject */
-    public $folder;
-    
-    /** @var Model\Share @inject */
-    public $share;
-    
+{     
     const shareType_id = 3;
    
     public function renderEdit($id) {
@@ -41,7 +35,8 @@ class NfsPresenter extends SharePresenter
     }
 
     protected function createComponentNfsEditForm() {
-        $form = new Form;
+        $form = $this->formFactory->create();
+        $form->getRenderer()->setRenderMode(RenderModeEnum::HORIZONTAL);
         
         $form->addCheckbox('export', 'Exportovat tuto složku přes NFS?');
         
@@ -57,7 +52,6 @@ class NfsPresenter extends SharePresenter
         $form->onSuccess[] = array($this, 'NfsEditFormSucceeded');
         $form->onValidate[] = array($this, 'NfsEditFormValidate');
         
-        $form->setRenderer(new BootstrapRenderer);
         return $form;
     }
 

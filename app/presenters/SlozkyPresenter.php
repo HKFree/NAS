@@ -6,7 +6,7 @@ use Nette,
     App\Model,
     App\Model\ByteHelper,
     Nette\Application\UI\Form,
-    Instante\Bootstrap3Renderer\BootstrapRenderer;
+    Instante\Bootstrap3Renderer\RenderModeEnum;
 
 
 class SlozkyPresenter extends BasePresenter
@@ -23,11 +23,14 @@ class SlozkyPresenter extends BasePresenter
     /** @var Model\StorageManager @inject */
     public $sm;
     
+    /** @var \Instante\ExtendedFormMacros\IFormFactory @inject */
+    public $formFactory;
+    
     public function renderDefault() {
         $this->template->folders = $this->folder->findBy(array('user_id' => $this->user->id));
         $this->template->shareTypes = $this->shareType->findBy(array('enabled' => 1));
         //$this->template->transformer = $this->foldersSharesTransformer;
-        $this->template->getFolder = $this->sc->getFolder;
+        $this->template->getFolder = [$this->sc, 'getFolder'];
         
         //\Tracy\Dumper::dump($this->sc->getFolders());
         //\Tracy\Dumper::dump($this->sc->getFolders());
@@ -42,7 +45,8 @@ class SlozkyPresenter extends BasePresenter
     }
     
     protected function createComponentSlozkaEditForm() {
-        $form = new Form;
+        $form = $this->formFactory->create();
+        $form->getRenderer()->setRenderMode(RenderModeEnum::HORIZONTAL);
 
         $form->addText('name', 'Jméno složky')
              ->addRule(Form::FILLED, 'Jméno složky musí být vyplněno');
@@ -50,6 +54,8 @@ class SlozkyPresenter extends BasePresenter
         $form->addText('size', 'Velikost');
         
         $form->addText('comment', 'Poznámka');
+        
+        $form->addCheckbox('dedicatedShare', 'Dedikovat pro NextCloud');
 
         $form->addHidden('id');
         
@@ -58,7 +64,6 @@ class SlozkyPresenter extends BasePresenter
         $form->onSuccess[] = array($this, 'slozkaEditFormSucceeded');
         $form->onValidate[] = array($this, 'slozkaEditFormValidate');
         
-        $form->setRenderer(new BootstrapRenderer);
         return $form;
     }
 
@@ -96,7 +101,7 @@ class SlozkyPresenter extends BasePresenter
                 $this->error('Složka s tímto ID neexistuje.');
             }
             
-            if($scFolder->space_used > $size) {
+            if(($size > 0) && ($scFolder->space_used > $size)) {
                 $form->addError('Zadaná velikost složky (' . ByteHelper::bytesToHuman($size, 2, TRUE) . ') je menší než aktuálně zabrané místo (' . ByteHelper::bytesToHuman($scFolder->space_used, 2, TRUE) . ')!');
             }
         }
@@ -115,7 +120,7 @@ class SlozkyPresenter extends BasePresenter
         $err = FALSE;
         
         if(empty($values->id)) {
-            $this->sm->createUserFolder($values->name, $size, $values->comment);
+            $this->sm->createUserFolder($values->name, $size, $values->comment, $values->dedicatedShare?\App\Presenters\NextcloudPresenter::shareType_id:0);
         } else {
             $this->folder->find($values->id)->update(array(
                 'comment' => $values->comment,
@@ -197,10 +202,13 @@ class SlozkyPresenter extends BasePresenter
         $defaults["name"] = $f->name;
         $defaults["size"] = ($scFolder->quota == 0 ? "" : ByteHelper::bytesToHuman($scFolder->quota, 2, TRUE));
         $defaults["comment"] = $f->comment;
+        $defaults["dedicatedShare"] = ($f->dedicatedShare != 0);
         
         //$this['slozkaEditForm']['name']->setOmitted(FALSE);
         $this['slozkaEditForm']->setDefaults($defaults);
-        $this['slozkaEditForm']['name']->setAttribute('readonly','readonly');
+        $this['slozkaEditForm']['name']->setAttribute('readonly', 'readonly');
         $this['slozkaEditForm']['name']->setValue($f->name);
+        $this['slozkaEditForm']['dedicatedShare']->setDisabled();
+        $this['slozkaEditForm']['dedicatedShare']->setValue($f->dedicatedShare != 0);
     }
 }

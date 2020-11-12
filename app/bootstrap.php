@@ -16,7 +16,7 @@ $configurator->createRobotLoader()
 $configurator->addConfig(__DIR__ . '/config/config.neon');
 $configurator->addConfig(__DIR__ . '/config/config.local.neon');
 
-Instante\Bootstrap3Renderer\DI\RendererExtension::register($configurator);
+//Instante\Bootstrap3Renderer\DI\RendererExtension::register($configurator);
 
 $container = $configurator->createContainer();
 

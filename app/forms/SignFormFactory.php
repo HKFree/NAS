@@ -5,9 +5,9 @@ namespace App\Forms;
 use Nette;
 use Nette\Application\UI\Form;
 use Nette\Security\User;
+use Nette\SmartObject;
 
-
-class SignFormFactory extends Nette\Object
+class SignFormFactory
 {
 	/** @var User */
 	private $user;

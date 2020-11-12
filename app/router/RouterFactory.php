@@ -16,7 +16,8 @@ class RouterFactory
 	public static function createRouter()
 	{
 		$router = new RouteList;
-		$router[] = new Route('<presenter>/<action>[/<id>]', 'Homepage:default', Route::SECURED);
+        $router[] = new Route('http://%host%/api/<action>', 'Api:default');
+		$router[] = new Route('https://%host%/<presenter>/<action>[/<id>]', 'Homepage:default');
 		return $router;
 	}
 

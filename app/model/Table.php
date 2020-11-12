@@ -3,12 +3,13 @@
 namespace App\Model;
 
 use Nette;
+use Nette\SmartObject;
     
 
 /**
  * Reprezentuje repozitář pro databázovou tabulku
  */
-abstract class Table extends Nette\Object
+abstract class Table
 {
 
     /** 

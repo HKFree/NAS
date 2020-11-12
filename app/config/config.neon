@@ -20,6 +20,7 @@ session:
 
 services:
 	router: App\RouterFactory::createRouter
+	formFactory: Instante\Bootstrap3Renderer\BootstrapFormFactory
 	- App\Forms\SignFormFactory
 	- App\Model\UserManager(%ldapServerURL%)
 	- App\Model\Folder
@@ -27,3 +28,6 @@ services:
 	- App\Model\ShareType
 	- App\Model\StorageConnector(%storageServerURL%)
 	- App\Model\StorageManager
+
+extensions:
+	extendedFormMacros: Instante\ExtendedFormMacros\DI\ExtendedFormMacrosExtension

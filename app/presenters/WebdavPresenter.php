@@ -6,17 +6,11 @@ use Nette,
     App\Model,
     App\Model\ByteHelper,
     Nette\Application\UI\Form,
-    Instante\Bootstrap3Renderer\BootstrapRenderer;
+    Instante\Bootstrap3Renderer\RenderModeEnum;
 
 
 class WebdavPresenter extends SharePresenter
-{  
-    /** @var Model\Folder @inject */
-    public $folder;
-    
-    /** @var Model\Share @inject */
-    public $share;
-    
+{     
     const shareType_id = 2;
    
     public function renderEdit($id) {
@@ -41,7 +35,8 @@ class WebdavPresenter extends SharePresenter
     }
 
     protected function createComponentWebdavEditForm() {
-        $form = new Form;
+        $form = $this->formFactory->create();
+        $form->getRenderer()->setRenderMode(RenderModeEnum::HORIZONTAL);
         
         $form->addCheckbox('export', 'Exportovat tuto složku na WebDAV?');
         
@@ -51,7 +46,8 @@ class WebdavPresenter extends SharePresenter
 
         $form->addText('password', 'Heslo')
              ->addConditionOn($form['export'], Form::EQUAL, TRUE)
-             ->addRule(Form::MIN_LENGTH, 'Heslo musí mít alespoň 8 znaků', 8);
+             ->addRule(Form::MIN_LENGTH, 'Heslo musí mít alespoň 8 znaků', 8)
+             ->setRequired(TRUE);
         
         $form->addHidden('folder_id');
         $form->addHidden('id');
@@ -60,8 +56,7 @@ class WebdavPresenter extends SharePresenter
 
         $form->onSuccess[] = array($this, 'WebdavEditFormSucceeded');
         $form->onValidate[] = array($this, 'WebdavEditFormValidate');
-        
-        $form->setRenderer(new BootstrapRenderer);
+
         return $form;
     }
 
