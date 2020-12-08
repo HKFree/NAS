@@ -12,3 +12,22 @@
 <p>
   Chcete zálohovat šifrovaně s Rsyncem? Použijte software <a href="http://duplicity.nongnu.org/">Duplicity</a> - umí šifrovaně synchronizovat data nejen na rsync, ale i na další protokoly jako FTP nebo Amazon S3.
 </p>
+<p>
+  Rsyncujete velké množství dat a funguje vám to pomalu? Zkuste následující tipy a triky!
+<ul>
+<li>Nepoužívejte kompresi (volba <code>-z</code>). V dnešní době jsou data ukládána ve většině případů komprimovaná a dodatečná komprese programem rsync je velmi výpočetně náročná. Limit může být rychlost procesoru.</li>
+<li>Nepoužívejte archivační mód (volba <code>-a</code>). NAS vás nenechá změnit vlastníka souboru, takže úplně zbytečně obdržíte velké množství chybových hlášek. Daleko lepší je použít pouze <code>-rltD</code>.</li>
+<li>Pokud to není nutné, použijte volbu <code>--size-only</code>. NAS má (vzhledem k použití vzdáleného uložiště Otesánek) trochu problémy s časy uložení souborů. Může tak často docházet k zbytečnému porovnávání souborů, u kterých vůbec nedošlo ke změně. Vystavujete se riziku, že se nesynchronizují soubory které se změnily na stejnou velikost, ale to v mnoha případech není kritické.</li>
+</ul>
+  Jak tedy vypadá ukázkový scriptík pro použití rsync s nas.hkfree.org?<br>
+<pre>
+#!/bin/bash
+export RSYNC_PASSWORD=mojeheslo
+rsync -rltDv --size-only /odkud/zalohujeme/ rsync://kraliknas@nas.hkfree.org/1234-mojeslozka
+</pre>
+</p>
+
+<h3>NextCloud</h3>
+<p>
+  Chcete vytvořit účet na <a href="https://nextcloud.hkfree.org">nextcloud.hkfree.org</a>? Jakub pro Vás připravil obrázkový návod! Ke stažení: <a href="{$basePath}/nextcloud_manual.pdf">nextcloud.pdf</a>
+</p>
