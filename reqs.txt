@@ -11,3 +11,14 @@ Local tests can use python3 tests/fixtures/otesanek.py, which listens on
 127.0.0.1:18765 and keeps fixture state in memory. Never use live endpoints for
 write tests. If Tracy email alerts are needed, set tracy.email in the local
 configuration and make sure mail delivery is configured.
+
+Integration tests (Linux, PHP CLI, Python 3 and pdo_sqlite):
+    apt-get install python3 php8.5-sqlite3
+    composer install
+    composer test
+
+Nette Tester runs the HTTP and write tests against separate temporary copies
+of the app. They use localhost ports, SQLite, a fixture authenticator, the
+storage mock and a fake sudo for NFS/rsync helpers. The test runner creates
+its own config.local.neon with local endpoints and copies only the application
+files it needs into the temporary directories.

@@ -1,26 +1,33 @@
+import argparse
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
 import urllib.parse
 
-folders = {
-    name: dict(name=name, space_available=2**40, space_used=2**30)
-    for name in ('/', '/1234', '/1234/demo')
-}
 
 class Storage(BaseHTTPRequestHandler):
+    folders = {
+        name: dict(name=name, space_available=2**40, space_used=2**30, quota=0)
+        for name in ('/', '/1234', '/1234/demo')
+    }
+
     def do_GET(self):
         url = urllib.parse.urlsplit(self.path)
-        name = urllib.parse.parse_qs(url.query).get('name', [''])[0]
+        params = urllib.parse.parse_qs(url.query)
+        name = params.get('name', [''])[0]
         if url.path == '/list':
-            body = list(folders.values())
+            body = list(self.folders.values())
         elif url.path == '/create':
-            folders[name] = dict(name=name, space_available=2**30, space_used=0)
+            quota = int(params.get('quota', ['0'])[0])
+            self.folders[name] = dict(name=name, space_available=2**30, space_used=0, quota=quota)
             body = {'ok': True}
         elif url.path == '/delete':
-            folders.pop(name, None)
+            body = {'ok': self.folders.pop(name, None) is not None}
+        elif url.path == '/quota':
+            quota = params['quota'][0]
+            self.folders[name]['quota'] = 0 if quota == 'none' else int(quota)
             body = {'ok': True}
-        elif url.path in ('/quota', '/perms'):
-            body = {'ok': True}
+        elif url.path == '/perms':
+            body = {'ok': name in self.folders}
         else:
             self.send_error(404)
             return
@@ -29,4 +36,11 @@ class Storage(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(json.dumps(body).encode())
 
-HTTPServer(('127.0.0.1', 18765), Storage).serve_forever()
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--port', type=int, default=18765)
+    args = parser.parse_args()
+    with HTTPServer(('127.0.0.1', args.port), Storage) as server:
+        print(server.server_port, flush=True)
+        server.serve_forever()

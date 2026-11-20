@@ -22,7 +22,7 @@ services:
 	router: App\RouterFactory::createRouter
 	formFactory: App\Forms\ShareFormFactory
 	- App\Forms\SignFormFactory
-	- App\Model\UserManager(%ldapServerURL%)
+	authenticator: App\Model\UserManager(%ldapServerURL%)
 	- App\Model\Folder
 	- App\Model\Share
 	- App\Model\ShareType
