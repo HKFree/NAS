@@ -27,23 +27,19 @@ class UserManager implements Authenticator
             throw new AuthenticationException('Chyba přihlášení, kontaktujte správce.', self::Failure);
         }
 
-        $filter = '(uid=' . ldap_escape($uid, '', LDAP_ESCAPE_FILTER) . ')';
-        $result = @ldap_search($connection, self::PEOPLE_DN, $filter, ['displayName', 'memberOf']);
-        if (!$result || ($entries = ldap_get_entries($connection, $result)) === false) {
-            throw new AuthenticationException('Chyba přihlášení, kontaktujte správce.', self::Failure);
-        }
-
-        if ($entries['count'] !== 1) {
-            throw new AuthenticationException('HKFree UID je neplatné.', self::IdentityNotFound);
-        }
-
-        $entry = $entries[0];
-        if (!@ldap_bind($connection, $entry['dn'], $password)) {
+        $dn = 'uid=' . ldap_escape($uid, '', LDAP_ESCAPE_DN) . ',' . self::PEOPLE_DN;
+        if (!@ldap_bind($connection, $dn, $password)) {
             if (ldap_errno($connection) === self::LDAP_INVALID_CREDENTIALS) {
-                throw new AuthenticationException('Neplatné heslo.', self::InvalidCredential);
+                throw new AuthenticationException('Neplatné heslo nebo HKFree UID.', self::InvalidCredential);
             }
             throw new AuthenticationException('Chyba přihlášení, kontaktujte správce.', self::Failure);
         }
+
+        $result = @ldap_read($connection, $dn, '(objectClass=*)', ['displayName', 'memberOf']);
+        if (!$result || ($entries = ldap_get_entries($connection, $result)) === false || $entries['count'] !== 1) {
+            throw new AuthenticationException('Chyba přihlášení, kontaktujte správce.', self::Failure);
+        }
+        $entry = $entries[0];
 
         $roles = [];
         foreach ($entry['memberof'] ?? [] as $key => $roleDn) {
