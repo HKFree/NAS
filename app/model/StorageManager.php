@@ -135,7 +135,7 @@ class StorageManager {
                 $count1g++;
             }
         }
-        $avg /= $count;
+        $avg = $count > 0 ? $avg / $count : 0;
         
         $minHistVal = 1;
         $maxHistVal = ceil(log($max, 1024));

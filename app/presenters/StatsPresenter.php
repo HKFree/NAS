@@ -5,8 +5,7 @@ namespace App\Presenters;
 use Nette,
     App\Model,
     App\Model\ByteHelper,
-    Nette\Application\UI\Form,
-    Instante\Bootstrap3Renderer\BootstrapRenderer;
+    Nette\Application\UI\Form;
 
 
 class StatsPresenter extends BasePresenter

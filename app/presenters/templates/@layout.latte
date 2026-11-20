@@ -51,19 +51,19 @@
               <p class="navbar-text" style="color: red;">V údržbě!</p>
             </li>
             
-            <li n:if="$user->loggedIn == true" data-toggle="tooltip" data-placement="bottom" title="Vaše role jsou {implode(', ', $user->getRoles())}">
-              <p class="navbar-text">Přihlášen {$user->getIdentity()->username} ({$user->getIdentity()->id})</p>
+            <li n:if="$user->isLoggedIn() == true" data-toggle="tooltip" data-placement="bottom" title="Vaše role jsou {implode(', ', $user->getRoles())}">
+              <p class="navbar-text">Přihlášen {$user->getIdentity()->getData()['username']} ({$user->getId()})</p>
             </li>
             
-            <li{ifCurrent Homepage:default} class="active"{/ifCurrent}><a n:href="Homepage:default">Domů</a></li>
-            {if $user->loggedIn}
-              <li{ifCurrent Slozky:default} class="active"{/ifCurrent}><a n:href="Slozky:default">Složky</a></li>
-              <li{ifCurrent Stats:default} class="active"{/ifCurrent}><a n:href="Stats:default">Statistika</a></li>
+            <li n:class="$presenter->isLinkCurrent('Homepage:default') ? 'active'"><a n:href="Homepage:default">Domů</a></li>
+            {if $user->isLoggedIn()}
+              <li n:class="$presenter->isLinkCurrent('Slozky:default') ? 'active'"><a n:href="Slozky:default">Složky</a></li>
+              <li n:class="$presenter->isLinkCurrent('Stats:default') ? 'active'"><a n:href="Stats:default">Statistika</a></li>
             {/if}
-            <li{ifCurrent Navody:default} class="active"{/ifCurrent}><a n:href="Navody:default">Návody</a></li>
-            <li{ifCurrent Sign:in} class="active"{/ifCurrent}>
-              <a n:if="$user->loggedIn == true" n:href="Sign:out">Odhlásit se</a>
-              <a n:if="$user->loggedIn == false" n:href="Sign:in">Přihlásit se</a>
+            <li n:class="$presenter->isLinkCurrent('Navody:default') ? 'active'"><a n:href="Navody:default">Návody</a></li>
+            <li n:class="$presenter->isLinkCurrent('Sign:in') ? 'active'">
+              <a n:if="$user->isLoggedIn() == true" n:href="Sign:out">Odhlásit se</a>
+              <a n:if="$user->isLoggedIn() == false" n:href="Sign:in">Přihlásit se</a>
             </li>
             <!--
             <li><a href="#contact">Contact</a></li>

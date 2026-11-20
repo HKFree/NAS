@@ -5,8 +5,7 @@ namespace App\Presenters;
 use Nette,
     App\Model,
     App\Model\ByteHelper,
-    Nette\Application\UI\Form,
-    Instante\Bootstrap3Renderer\BootstrapRenderer;
+    Nette\Application\UI\Form;
 
 
 /**
@@ -23,7 +22,7 @@ class SharePresenter extends BasePresenter
     /** @var Model\StorageManager @inject */
     public $sm;
     
-    /** @var \Instante\ExtendedFormMacros\IFormFactory @inject */
+    /** @var \App\Forms\ShareFormFactory @inject */
     public $formFactory;
     
     public function renderEdit($id) {

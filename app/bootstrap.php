@@ -2,10 +2,10 @@
 
 require __DIR__ . '/../vendor/autoload.php';
 
-$configurator = new Nette\Configurator;
+$configurator = new Nette\Bootstrap\Configurator;
 
 $configurator->setDebugMode(FALSE); // enable for your remote IP
-$configurator->enableDebugger(__DIR__ . '/../log', 'bkralik@hkfree.org');
+$configurator->enableTracy(__DIR__ . '/../log');
 
 $configurator->setTempDirectory(__DIR__ . '/../temp');
 
@@ -15,8 +15,6 @@ $configurator->createRobotLoader()
 
 $configurator->addConfig(__DIR__ . '/config/config.neon');
 $configurator->addConfig(__DIR__ . '/config/config.local.neon');
-
-//Instante\Bootstrap3Renderer\DI\RendererExtension::register($configurator);
 
 $container = $configurator->createContainer();
 

@@ -23,6 +23,9 @@ class StorageConnector {
     public function getFolders() {
         $data = $this->httpGet('list');
         $folders = json_decode($data);
+        if (!is_array($folders)) {
+            throw new \RuntimeException('Storage API did not return a folder list.');
+        }
         $this->folders = $folders;
         \Tracy\Debugger::barDump($folders);
         return($folders);
@@ -49,7 +52,7 @@ class StorageConnector {
         
         $data = $this->httpGet('create', $params);
         $ret = json_decode($data);
-        return($ret->ok && TRUE);
+        return (bool) ($ret->ok ?? false);
     }
     
     public function fixPermissions($name) {
@@ -57,7 +60,7 @@ class StorageConnector {
         
         $data = $this->httpGet('perms', $params);
         $ret = json_decode($data);
-        return($ret->ok && TRUE);
+        return (bool) ($ret->ok ?? false);
     }
     
     public function deleteFolder($name) {
@@ -65,7 +68,7 @@ class StorageConnector {
         
         $data = $this->httpGet('delete', $params);
         $ret = json_decode($data);
-        return($ret->ok && TRUE);
+        return (bool) ($ret->ok ?? false);
     }
     
     public function setQuota($name, $quota = NULL) {
@@ -78,7 +81,7 @@ class StorageConnector {
         
         $data = $this->httpGet('quota', $params);
         $ret = json_decode($data);
-        return($ret->ok && TRUE);
+        return (bool) ($ret->ok ?? false);
     }
     
     private function httpGet($action, $parameters = array()) {
@@ -94,8 +97,6 @@ class StorageConnector {
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HEADER, false);
         $data = curl_exec($ch);
-        $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
-        return($data);
+        return is_string($data) ? $data : '';
     }
 }

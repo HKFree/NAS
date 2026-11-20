@@ -9,7 +9,7 @@
             Přihlášení HKFree loginem - stejné údaje jako do Money/UserDB
           </p>
           
-          {form signInForm class => "form-horizontal", role => "form"}
+          {form signInForm, class => "form-horizontal", role => "form"}
             <ul class="errors" n:if="$form->hasErrors()">
                 <li n:foreach="$form->errors as $error">{$error}</li>
             </ul>

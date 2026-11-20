@@ -13,7 +13,7 @@ abstract class Table
 {
 
     /** 
-     * @var Nette\Database\Context 
+     * @var Nette\Database\Explorer
      */
 	protected $database;
 
@@ -30,10 +30,10 @@ abstract class Table
 
 
     /**
-     * @param Nette\Database\Connection $db
+     * @param Nette\Database\Explorer $db
      * @throws \Nette\InvalidStateException
      */
-    public function __construct(Nette\Database\Context $db, Nette\Security\User $user)
+    public function __construct(Nette\Database\Explorer $db, Nette\Security\User $user)
     {
         $this->database = $db;
         $this->userService = $user;
@@ -89,7 +89,7 @@ abstract class Table
      *
      * @param array $by
      *
-     * @return \Nette\Database\Table\ActiveRow|FALSE
+     * @return \Nette\Database\Table\ActiveRow|null
      */
     public function findOneBy(array $by)
     {
@@ -103,7 +103,7 @@ abstract class Table
      *
      * @param int $id
      *
-     * @return \Nette\Database\Table\ActiveRow|FALSE
+     * @return \Nette\Database\Table\ActiveRow|null
      */
     public function find($id)
     {
@@ -115,7 +115,7 @@ abstract class Table
      *
      * @param array $by
      *
-     * @return \Nette\Database\Table\ActiveRow|FALSE
+     * @return \Nette\Database\Table\ActiveRow|null
      */
     public function delete(array $by)
     {

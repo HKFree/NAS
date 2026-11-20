@@ -16,10 +16,10 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter
     
     private $maintenance = FALSE;
     
-    protected function startup() {
+    protected function startup(): void {
         parent::startup();
         
-        $presenterName = $this->getPresenter()->name;
+        $presenterName = $this->getName();
         $nonLoginPresenters = array('Sign', 'Homepage', 'Api', 'Navody');
         $maintenancePresenters = array('Api');
         
@@ -36,7 +36,7 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter
         }
     }
     
-    protected function beforeRender() {
+    protected function beforeRender(): void {
         parent::beforeRender();
         $this->template->maint = $this->maintenance;
         $this->template->maintIP = $this->request->getRemoteAddress();

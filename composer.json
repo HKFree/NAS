@@ -1,29 +1,28 @@
 {
-	"name": "nette/web-project",
-	"description": "Nette: Standard Web Project",
-	"type": "project",
-	"license": ["MIT", "BSD-3-Clause", "GPL-2.0", "GPL-3.0"],
-	"require": {
-		"php": ">= 7.3.0",
-		"nette/application": "~2.4.15",
-		"nette/bootstrap": "~2.4.0",
-		"nette/caching": "~2.5.0",
-		"nette/database": "~2.4.0",
-		"nette/di": "~2.4.0",
-		"nette/finder": "~2.4.0",
-		"nette/forms": "~2.4.0",
-		"nette/http": "~2.4.0",
-		"nette/mail": "~2.4.0",
-		"nette/robot-loader": "~2.4.0",
-		"nette/safe-stream": "~2.4.0",
-		"nette/security": "~2.4.0",
-		"nette/utils": "~2.5.0",
-		"latte/latte": "~2.4.0",
-		"tracy/tracy": "~2.4.0",
-		"nette/nette": "~2.4.0",
-		"instante/bootstrap-3-renderer": "@dev"
-	},
-	"require-dev": {
-		"nette/tester": "~1.4"
-	}
+    "name": "hkfree/nas",
+    "description": "HKFree NAS administration portal",
+    "type": "project",
+    "license": [
+        "MIT",
+        "BSD-3-Clause",
+        "GPL-2.0-only",
+        "GPL-3.0-only"
+    ],
+    "require": {
+        "php": "^8.3",
+        "ext-curl": "*",
+        "ext-ldap": "*",
+        "ext-pdo": "*",
+        "nette/application": "^3.2",
+        "nette/bootstrap": "^3.2",
+        "nette/database": "^3.2",
+        "nette/di": "^3.2",
+        "nette/forms": "^3.2",
+        "nette/http": "^3.3",
+        "nette/mail": "^4.0",
+        "nette/robot-loader": "^4.0",
+        "nette/security": "^3.2",
+        "latte/latte": "^3.0",
+        "tracy/tracy": "^2.10"
+    }
 }

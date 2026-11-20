@@ -5,8 +5,7 @@ namespace App\Presenters;
 use Nette,
     App\Model,
     App\Model\ByteHelper,
-    Nette\Application\UI\Form,
-    Instante\Bootstrap3Renderer\RenderModeEnum;
+    Nette\Application\UI\Form;
 
 
 class FtpPresenter extends SharePresenter
@@ -43,7 +42,6 @@ class FtpPresenter extends SharePresenter
 
     protected function createComponentFtpEditForm() {
         $form = $this->formFactory->create();
-        $form->getRenderer()->setRenderMode(RenderModeEnum::HORIZONTAL);
         
         $form->addCheckbox('export', 'Exportovat tuto složku na FTP?');
         

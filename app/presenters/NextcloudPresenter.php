@@ -5,8 +5,7 @@ namespace App\Presenters;
 use Nette,
     App\Model,
     App\Model\ByteHelper,
-    Nette\Application\UI\Form,
-    Instante\Bootstrap3Renderer\RenderModeEnum;
+    Nette\Application\UI\Form;
 
 class NextcloudPresenter extends SharePresenter
 {  
@@ -39,7 +38,6 @@ class NextcloudPresenter extends SharePresenter
     
     protected function createComponentNextcloudEditForm() {
         $form = $this->formFactory->create();
-        $form->getRenderer()->setRenderMode(RenderModeEnum::HORIZONTAL);
 
         $form->addText('password', 'Heslo')
              ->addRule(Form::MIN_LENGTH, 'Heslo musí mít alespoň 7 znaků', 7)
@@ -86,7 +84,6 @@ class NextcloudPresenter extends SharePresenter
 
     protected function createComponentNextcloudCreateForm() {
         $form = $this->formFactory->create();
-        $form->getRenderer()->setRenderMode(RenderModeEnum::HORIZONTAL);
 
         $form->addText('username', 'Přihlašovací jméno')
              ->addRule(Form::MIN_LENGTH, 'Přihlašovací jméno musí mít alespoň 5 znaků', 5)

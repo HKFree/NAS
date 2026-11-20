@@ -5,8 +5,7 @@ namespace App\Presenters;
 use Nette,
     App\Model,
     App\Model\ByteHelper,
-    Nette\Application\UI\Form,
-    Instante\Bootstrap3Renderer\RenderModeEnum;
+    Nette\Application\UI\Form;
 
 
 class RsyncPresenter extends SharePresenter
@@ -41,7 +40,6 @@ class RsyncPresenter extends SharePresenter
 
     protected function createComponentRsyncEditForm() {
         $form = $this->formFactory->create();
-        $form->getRenderer()->setRenderMode(RenderModeEnum::HORIZONTAL);
         
         $form->addCheckbox('export', 'Exportovat tuto složku přes Rsync?');
         

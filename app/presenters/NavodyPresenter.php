@@ -2,8 +2,7 @@
 
 namespace App\Presenters;
 
-use Nette,
-    Instante\Bootstrap3Renderer\BootstrapRenderer;
+use Nette;
 
 
 class NavodyPresenter extends BasePresenter

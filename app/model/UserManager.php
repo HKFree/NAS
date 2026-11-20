@@ -2,104 +2,64 @@
 
 namespace App\Model;
 
-use Nette;
 use Nette\Security\AuthenticationException;
-use Nette\SmartObject;
+use Nette\Security\Authenticator;
+use Nette\Security\IIdentity;
+use Nette\Security\SimpleIdentity;
 
-
-/**
- * Users management.
- */
-class UserManager implements Nette\Security\IAuthenticator
+class UserManager implements Authenticator
 {
-    /** @var string */
-    private $ldapServerURL;
-    
-	public function __construct($ldapServerURL)
-	{
-        $this->ldapServerURL = $ldapServerURL;
-	}
+    private const PEOPLE_DN = 'ou=People,dc=hkfree,dc=org';
+    private const LDAP_INVALID_CREDENTIALS = 49;
 
-	/**
-	 * Performs an authentication.
-	 * @return Nette\Security\Identity
-	 * @throws Nette\Security\AuthenticationException
-	 */
-	public function authenticate(array $credentials)
-	{
-		list($uid, $password) = $credentials;
-
-		$identity = $this->ldapGetIdentity($uid);
-        $this->ldapAuthenticate($uid, $password);
-
-		return($identity);
-	}
-    
-    private function ldapAuthenticate($uid, $password) {
-        $shuidstring = escapeshellarg("uid=" . $uid . ",ou=People,dc=hkfree,dc=org");
-        $shpass = escapeshellarg($password);
-        $shcmd = "ldapwhoami -x -D " . $shuidstring . " -w " . $shpass . " -H " . $this->ldapServerURL;
-        
-        $dspecs = array(
-            1 => array('pipe', 'w'),
-            2 => array('pipe', 'w')
-        );
-        
-        $proc = proc_open($shcmd, $dspecs, $pipes);
-        $stdout = trim(stream_get_contents($pipes[1]));
-        fclose($pipes[1]);
-        $stderr = trim(stream_get_contents($pipes[2]));
-        fclose($pipes[2]);
-        proc_close($proc);        
-
-        if(preg_match("/^dn:uid=$uid/", $stdout)) {
-            return(true);
-        } elseif (preg_match("/Invalid credentials/", $stderr)) {
-            throw new AuthenticationException('Neplatné heslo.', self::INVALID_CREDENTIAL);
-        } else {
-            throw new AuthenticationException('Chyba přihlášení, kontaktujte správce.', self::FAILURE);
-        }
+    public function __construct(private string $ldapServerURL)
+    {
     }
-    
-    private function ldapGetIdentity($uid) {
-        $ident = array();
-        $ident['id'] = $uid;
 
-        $dn = "ou=People,dc=hkfree,dc=org" ;
-        $filter = "uid=".$uid;
-        
-        $ldapCon = ldap_connect($this->ldapServerURL);
-        if(!$ldapCon) {
-            throw new AuthenticationException('Chyba přihlášení, kontaktujte správce.', self::FAILURE);
+    public function authenticate(string $uid, string $password): IIdentity
+    {
+        if ($password === '') {
+            throw new AuthenticationException('Neplatné heslo.', self::InvalidCredential);
         }
-        
-        $rec1 = ldap_search($ldapCon, $dn, $filter, array("memberOf"));
-        if(!$rec1) {
-            throw new AuthenticationException('Chyba přihlášení, kontaktujte správce.', self::FAILURE);
+
+        $connection = ldap_connect($this->ldapServerURL);
+        if (!$connection || !ldap_set_option($connection, LDAP_OPT_PROTOCOL_VERSION, 3)) {
+            throw new AuthenticationException('Chyba přihlášení, kontaktujte správce.', self::Failure);
         }
-        $info1 = ldap_get_entries($ldapCon, $rec1);
-        
-        $rec2 = ldap_search($ldapCon, $dn, $filter);
-        if(!$rec2) {
-            throw new AuthenticationException('Chyba přihlášení, kontaktujte správce.', self::FAILURE);
+
+        $filter = '(uid=' . ldap_escape($uid, '', LDAP_ESCAPE_FILTER) . ')';
+        $result = @ldap_search($connection, self::PEOPLE_DN, $filter, ['displayName', 'memberOf']);
+        if (!$result || ($entries = ldap_get_entries($connection, $result)) === false) {
+            throw new AuthenticationException('Chyba přihlášení, kontaktujte správce.', self::Failure);
         }
-        $info2 = ldap_get_entries($ldapCon, $rec2);
-        
-        if($info2['count'] == 0) {
-            throw new AuthenticationException('HKFree UID je neplatné.', self::IDENTITY_NOT_FOUND);
+
+        if ($entries['count'] !== 1) {
+            throw new AuthenticationException('HKFree UID je neplatné.', self::IdentityNotFound);
         }
-        
-        $ident['username'] = $info2[0]['displayname'][0];
-        
-        foreach($info1[0]['memberof'] as $roleString) {
-            if(preg_match('/cn=(.*),ou=roles,dc=hkfree,dc=org/', $roleString, $matches)) {
-                $ident['roles'][] = $matches[1];
+
+        $entry = $entries[0];
+        if (!@ldap_bind($connection, $entry['dn'], $password)) {
+            if (ldap_errno($connection) === self::LDAP_INVALID_CREDENTIALS) {
+                throw new AuthenticationException('Neplatné heslo.', self::InvalidCredential);
+            }
+            throw new AuthenticationException('Chyba přihlášení, kontaktujte správce.', self::Failure);
+        }
+
+        $roles = [];
+        foreach ($entry['memberof'] ?? [] as $key => $roleDn) {
+            if (is_int($key) && preg_match('/^cn=([^,]+),ou=roles,dc=hkfree,dc=org$/i', $roleDn, $matches)) {
+                $roles[] = $matches[1];
             }
         }
-        return new Nette\Security\Identity($uid, $ident['roles'], $ident);
-    } 
+
+        return new SimpleIdentity($uid, $roles, [
+            'id' => $uid,
+            'username' => $entry['displayname'][0] ?? $uid,
+            'roles' => $roles,
+        ]);
+    }
 }
 
-
 class DuplicateNameException extends \Exception
-{}
+{
+}

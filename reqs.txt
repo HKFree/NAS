@@ -1,3 +1,13 @@
-apt-get install apache2 php5
-apt-get install php5-ldap php5-mysqlnd ldap-tools
-a2enmod rewrite
+Ubuntu 26.04 server packages:
+    apt-get install apache2 php8.5-cli php8.5-fpm php8.5-curl php8.5-ldap php8.5-mbstring php8.5-mysql composer
+    a2enmod rewrite proxy_fcgi setenvif ssl
+
+Run composer install --no-dev from the checkout. Point the Apache document
+root at www/ and route PHP requests to the portal's PHP-FPM pool. Its user
+needs write access to temp/ and log/.
+
+Set LDAP, storage API and database endpoints in app/config/config.local.neon.
+Local tests can use python3 tests/fixtures/otesanek.py, which listens on
+127.0.0.1:18765 and keeps fixture state in memory. Never use live endpoints for
+write tests. If Tracy email alerts are needed, set tracy.email in the local
+configuration and make sure mail delivery is configured.

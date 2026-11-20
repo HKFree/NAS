@@ -2,11 +2,9 @@
 
 namespace App\Presenters;
 
-use Nette,
-    App\Model,
+use App\Model,
     App\Model\ByteHelper,
-    Nette\Application\UI\Form,
-    Instante\Bootstrap3Renderer\RenderModeEnum;
+    Nette\Application\UI\Form;
 
 
 class SlozkyPresenter extends BasePresenter
@@ -23,7 +21,7 @@ class SlozkyPresenter extends BasePresenter
     /** @var Model\StorageManager @inject */
     public $sm;
     
-    /** @var \Instante\ExtendedFormMacros\IFormFactory @inject */
+    /** @var \App\Forms\ShareFormFactory @inject */
     public $formFactory;
     
     public function renderDefault() {
@@ -46,7 +44,6 @@ class SlozkyPresenter extends BasePresenter
     
     protected function createComponentSlozkaEditForm() {
         $form = $this->formFactory->create();
-        $form->getRenderer()->setRenderMode(RenderModeEnum::HORIZONTAL);
 
         $form->addText('name', 'Jméno složky')
              ->addRule(Form::FILLED, 'Jméno složky musí být vyplněno');
@@ -108,7 +105,7 @@ class SlozkyPresenter extends BasePresenter
     }
     
     public function slozkaEditFormSucceeded(Form $form, $values) {
-        if(!empty($value->id) && !$this->sm->checkPermissions($values->id)) {
+        if(!empty($values->id) && !$this->sm->checkPermissions($values->id)) {
             $this->error('Na editaci této složky nemáte právo.');
         }
         
@@ -163,7 +160,7 @@ class SlozkyPresenter extends BasePresenter
         $fc = $fm["sc"];
         $maxSpace = 2 * 1024 * 1024;
         if($fc->space_used > $maxSpace) {
-            $this->flashMessage('Chyba, složka není prázdná. Obsahuje ' . \Latte\Runtime\Filters::bytes($fc->space_used) . ' dat.', 'danger');
+            $this->flashMessage('Chyba, složka není prázdná. Obsahuje ' . ByteHelper::bytesToHuman($fc->space_used, 2, true) . ' dat.', 'danger');
             $this->redirect('Slozky:delete', $id);
         }
         
@@ -200,7 +197,8 @@ class SlozkyPresenter extends BasePresenter
         
         $defaults["id"] = $f->id;
         $defaults["name"] = $f->name;
-        $defaults["size"] = ($scFolder->quota == 0 ? "" : ByteHelper::bytesToHuman($scFolder->quota, 2, TRUE));
+        $quota = $scFolder->quota ?? 0;
+        $defaults["size"] = $quota == 0 ? "" : ByteHelper::bytesToHuman($quota, 2, TRUE);
         $defaults["comment"] = $f->comment;
         $defaults["dedicatedShare"] = ($f->dedicatedShare != 0);
         
